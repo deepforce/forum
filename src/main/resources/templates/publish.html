@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Forum</title>
+    <title>Publish - Forum</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <link rel="stylesheet" href="css/bootstrap.min.css"/>
     <link rel="stylesheet" href="css/bootstrap-theme.min.css">
@@ -17,7 +17,7 @@
                     data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
                 <span class="sr-only">Forum</span>
             </button>
-            <a class="navbar-brand" href="/">Forum</a>
+            <a class="navbar-brand" href="#">Forum</a>
         </div>
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <form class="navbar-form navbar-left">
@@ -47,35 +47,45 @@
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
 </nav>
-
 <div class="container-fluid main">
     <div class="row">
         <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
-            <h2><span class="glyphicon glyphicon-list" aria-hidden="true"></span> Discover</h2>
+            <h2><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Post</h2>
             <hr>
 
-            <div class="media" th:each="question : ${questions}">
-                <div class="media-left">
-                    <a href="#">
-                        <img class="media-object img-rounded" th:src="${question.user.avatarUrl}">
-                    </a>
+            <form action="/publish" method="post">
+                <div class="form-group">
+                    <label for="title">Title:</label>
+                    <input type="text" class="form-control" id="title" th:value="${title}" name="title"
+                           placeholder="Title...">
                 </div>
-                <div class="media-body">
-                    <h4 class="media-heading" th:text="${question.title}"></h4>
-                    <span th:text="${question.description}"></span> <br>
-                    <span class="text-desc">
-                        <span th:text="${question.commentCount}"></span> Replies
-                        <span th:text="${question.viewCount}"></span> Views •
-                        <span th:text="${#dates.format(question.gmtCreate,'dd MMMM yyyy')}"></span>
-                    </span>
+                <div class="form-group">
+                    <label for="description">Description:</label>
+                    <textarea name="description" id="description" th:text="${description}" class="form-control"
+                              cols="30" rows="10"></textarea>
                 </div>
-            </div>
+                <div class="form-group">
+                    <label for="tag">Tags:</label>
+                    <input type="text" class="form-control" th:value="${tag}" id="tag" name="tag"
+                           placeholder="Input tags, separate by comma">
+                </div>
+
+                <div class="container-fluid main">
+                    <div class="row">
+                        <div class="alert alert-danger col-lg-9 col-md-12 col-sm-12 col-xs-12" th:text="${error}"
+                             th:if="${error != null}"></div>
+                        <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
+                            <button type="submit" class="btn btn-success btn-publish">Publish</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
         </div>
         <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
-            <h3>Trending Topics</h3>
-            • Title: Please describe your question briefly, not more than 25 words.<br>
-            • Description: Please describe your question in detail and provide some related references.<br>
-            • Tag: You can add tags separating by comma. Tag name should not exceed 10 words.<br>
+            <h3>Publish Guide</h3>
+            Title: Describe your question briefly, not more than 25 words.<br>
+            Description: Describe your question in detail and provide some related references.<br>
+            Tag: Add tags separating by comma. Tag name should not exceed 10 words.<br>
         </div>
     </div>
 </div>
