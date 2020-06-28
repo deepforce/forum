@@ -1,9 +1,8 @@
 package deepforce.forum.controller;
 
-import deepforce.forum.dto.CommentDTO;
+import deepforce.forum.dto.CommentCreateDTO;
 import deepforce.forum.dto.ResultDTO;
 import deepforce.forum.exception.CustomizeErrorCode;
-import deepforce.forum.mapper.CommentMapper;
 import deepforce.forum.model.Comment;
 import deepforce.forum.model.User;
 import deepforce.forum.service.CommentService;
@@ -15,8 +14,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Map;
 
 @Controller
 public class CommentController {
@@ -25,7 +22,7 @@ public class CommentController {
 
     @ResponseBody
     @RequestMapping(value = "/comment", method = RequestMethod.POST)
-    public Object post(@RequestBody CommentDTO commentDTO,
+    public Object post(@RequestBody CommentCreateDTO commentCreateDTO,
                        HttpServletRequest request) {
 
         User user = (User)request.getSession().getAttribute("user");
@@ -33,9 +30,9 @@ public class CommentController {
             return ResultDTO.errorOf(CustomizeErrorCode.NO_LOGIN);
         }
         Comment comment = new Comment();
-        comment.setParentId(commentDTO.getParentId());
-        comment.setContent(commentDTO.getContent());
-        comment.setType(commentDTO.getType());
+        comment.setParentId(commentCreateDTO.getParentId());
+        comment.setContent(commentCreateDTO.getContent());
+        comment.setType(commentCreateDTO.getType());
         comment.setGmtModified(System.currentTimeMillis());
         comment.setGmtCreate(System.currentTimeMillis());
         comment.setCommentator(user.getId());
