@@ -1,8 +1,8 @@
 package deepforce.forum.controller;
 
-import deepforce.forum.dto.CommentCreateDTO;
 import deepforce.forum.dto.CommentDTO;
 import deepforce.forum.dto.QuestionDTO;
+import deepforce.forum.enums.CommentTypeEnum;
 import deepforce.forum.service.CommentService;
 import deepforce.forum.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ public class QuestionController {
     public String question(@PathVariable(name = "id") Long id, Model model) {
         QuestionDTO questionDTO = questionService.getById(id);
 
-        List<CommentDTO> comments = commentService.listByQuestionId(id);
+        List<CommentDTO> comments = commentService.listByTargetId(id, CommentTypeEnum.QUESTION);
 
         // Increase views count
         questionService.incView(id);

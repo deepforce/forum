@@ -7,6 +7,7 @@ public enum CustomizeErrorCode implements ICustomizeErrorCode {
     SYS_ERROR(2004, "Server Error!"),
     TYPE_PARAM_WRONG(2005, "Wrong comment type or type not exist."),
     COMMENT_NOT_FOUND(2006, "The comment you reply doesn't exist"),
+    CONTENT_IS_EMPTY(2007, "The input value cannot be empty."),
     ;
 
     CustomizeErrorCode(String message) {
