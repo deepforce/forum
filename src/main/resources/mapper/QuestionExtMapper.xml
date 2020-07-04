@@ -44,7 +44,7 @@
     select count(*)
     from QUESTION
     <where>
-      <if test="search != null and search != ' '">
+      <if test="search != null and search != ''">
         and title regexp #{search}
       </if>
     </where>
@@ -54,7 +54,7 @@
     select *
     from QUESTION
     <where>
-      <if test="search != null and search != ' '">
+      <if test="search != null and search != ''">
         and title regexp #{search}
       </if>
     </where>
