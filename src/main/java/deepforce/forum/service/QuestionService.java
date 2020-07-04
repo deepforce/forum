@@ -2,6 +2,7 @@ package deepforce.forum.service;
 
 import deepforce.forum.dto.PaginationDTO;
 import deepforce.forum.dto.QuestionDTO;
+import deepforce.forum.dto.QuestionQueryDTO;
 import deepforce.forum.exception.CustomizeErrorCode;
 import deepforce.forum.exception.CustomizeException;
 import deepforce.forum.mapper.QuestionExtMapper;
@@ -34,13 +35,21 @@ public class QuestionService {
     @Autowired
     private UserMapper userMapper;
 
-    public PaginationDTO list(Integer page, Integer size) {
+    public PaginationDTO list(String search, Integer page, Integer size) {
+
+        if (StringUtils.isNotBlank(search)) {
+            String[] tags = StringUtils.split(search, " ");
+            search = Arrays.stream(tags).collect(Collectors.joining("|"));
+        }
+
 
         PaginationDTO paginationDTO = new PaginationDTO();
 
         Integer totalPage;
 
-        Integer totalCount = (int) questionMapper.countByExample(new QuestionExample());
+        QuestionQueryDTO questionQueryDTO = new QuestionQueryDTO();
+        questionQueryDTO.setSearch(search);
+        Integer totalCount = questionExtMapper.countBySearch(questionQueryDTO);
 
         if (totalCount % size == 0) {
             totalPage = totalCount / size;
@@ -58,10 +67,12 @@ public class QuestionService {
         paginationDTO.setPagination(totalPage, page);
 
         // size*(page-1)
-        Integer offset = size * (page - 1);
+        Integer offset = page < 1 ? 0 : size * (page - 1);
         QuestionExample questionExample = new QuestionExample();
         questionExample.setOrderByClause("gmt_create desc");
-        List<Question> questions = questionMapper.selectByExampleWithBLOBsWithRowbounds(questionExample, new RowBounds(offset, size));
+        questionQueryDTO.setSize(size);
+        questionQueryDTO.setPage(offset);
+        List<Question> questions = questionExtMapper.selectBySearch(questionQueryDTO);
         List<QuestionDTO> questionDTOList = new ArrayList<>();
 
         for (Question question : questions) {
@@ -72,7 +83,7 @@ public class QuestionService {
             questionDTOList.add(questionDTO);
         }
 
-        paginationDTO.setQuestions(questionDTOList);
+        paginationDTO.setData(questionDTOList);
         return paginationDTO;
     }
 
@@ -116,7 +127,7 @@ public class QuestionService {
             questionDTOList.add(questionDTO);
         }
 
-        paginationDTO.setQuestions(questionDTOList);
+        paginationDTO.setData(questionDTOList);
         return paginationDTO;
     }
 
@@ -143,7 +154,16 @@ public class QuestionService {
             questionMapper.insert(question);
         } else {
             // Update
-            question.setGmtModified(question.getGmtCreate());
+
+            Question dbQuestion = questionMapper.selectByPrimaryKey(question.getId());
+            if (dbQuestion == null) {
+                throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+            }
+
+            if (dbQuestion.getCreator().longValue() != question.getCreator().longValue()) {
+                throw new CustomizeException(CustomizeErrorCode.INVALID_OPERATION);
+            }
+
             Question updateQuestion = new Question();
             updateQuestion.setGmtModified(System.currentTimeMillis());
             updateQuestion.setTitle(question.getTitle());
