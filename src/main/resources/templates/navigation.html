@@ -39,7 +39,7 @@
                         </ul>
                     </li>
                     <li th:if="${session.user == null}">
-                        <a href="https://github.com/login/oauth/authorize?client_id=cd1b2839576d0971f83c&redirect_uri=http://localhost:8887/callback&scope=user&state=1">Login</a>
+                        <a th:href="@{https://github.com/login/oauth/authorize(client_id='cd1b2839576d0971f83c',redirect_uri=${#httpServletRequest.getServletContext().getAttribute('redirectUri')},scope='user',state=1)}">Login</a>
                     </li>
 
                 </ul>
