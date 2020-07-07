@@ -3,12 +3,14 @@ package deepforce.forum.provider;
 import com.alibaba.fastjson.JSON;
 import deepforce.forum.dto.AccessTokenDTO;
 import deepforce.forum.dto.GithubUser;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
 @Component
+@Slf4j
 public class GithubProvider {
     public String getAccessToken(AccessTokenDTO accessTokenDTO) {
         MediaType mediaType = MediaType.get("application/json; charset=utf-8");
@@ -23,8 +25,8 @@ public class GithubProvider {
             String string = response.body().string();
             String token = string.split("&")[0].split("=")[1];
             return token;
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            log.error("getAccessToken error,{}", accessTokenDTO, e);
         }
         return null;
     }
@@ -36,11 +38,11 @@ public class GithubProvider {
                 .build();
         try{
             Response response = client.newCall(request).execute();
-
             String string = response.body().string();
             GithubUser githubUser = JSON.parseObject(string, GithubUser.class);
             return githubUser;
-        } catch (IOException e) {
+        } catch (Exception e) {
+            log.error("getUser error,{}", accessToken, e);
         }
         return null;
     }
