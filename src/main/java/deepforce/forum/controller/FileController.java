@@ -24,7 +24,7 @@ public class FileController {
     @ResponseBody
     public FileDTO upload(HttpServletRequest request) {
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
-        MultipartFile file = ((MultipartHttpServletRequest) request).getFile("editormd-image-file");
+        MultipartFile file = multipartRequest.getFile("editormd-image-file");
         try {
             String fileName = aliYunProvider.upload(file.getInputStream(), file.getContentType(), file.getOriginalFilename());
             FileDTO fileDTO = new FileDTO();
